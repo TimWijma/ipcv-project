@@ -1,6 +1,8 @@
 import cv2
 import sys
 
+from common import detect_face, draw_detection
+
 def main() -> None:
     cap = cv2.VideoCapture(0)  # 0 = default camera
 
@@ -23,13 +25,11 @@ def main() -> None:
 
         gray_image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        face = face_classifier.detectMultiScale(
-            gray_image, scaleFactor=1.1, minNeighbors=5, minSize=(40, 40)
-        )
-
+        face = detect_face(frame, face_classifier)
         for (x, y, w, h) in face:
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 4)
+            draw_detection(frame, x, y, w, h, "Face")
 
+        
         cv2.imshow('Live Camera', frame)
 
     cap.release()
