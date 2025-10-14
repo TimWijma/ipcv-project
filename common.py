@@ -36,3 +36,20 @@ def detect_face(image, face_classifier):
         gray_image, scaleFactor=1.1, minNeighbors=6, minSize=(40, 40)
     )
     return faces
+
+def rect_to_bb(rect):
+    x = rect.left()
+    y = rect.top()
+    w = rect.right() - x
+    h = rect.bottom() - y
+
+    return (x, y, w, h)
+
+
+def shape_to_np(shape, dtype="int"):
+    coords = np.zeros((62, 2), dtype=dtype)
+
+    for i in range(62):
+        coords[i] = (shape.part(i).x, shape.part(i).y)
+
+    return coords
