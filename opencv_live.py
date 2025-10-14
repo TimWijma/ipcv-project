@@ -1,73 +1,54 @@
 import cv2
 import sys
-from imutils import face_utils
-import argparse
-import dlib
+from facelandmark import FaceLandmarkerHandler, FilterManager, HandLandmarkerHandler
+from filters import blush_filter, draw_hand_landmarks_filter, draw_landmarks_filter
 
-from common import detect_face, draw_detection
-
-def main() -> None:
-    cap = cv2.VideoCapture(0)  # 0 = default camera
-
-    face_classifier = cv2.CascadeClassifier(
-        cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
-    )
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--shape_predictor", required=True,
-                        help="path to shape_predictor_68_face_landmarks.dat")
-    args = vars(parser.parse_args())
-
-    detector = dlib.get_frontal_face_detector()
-    predictor = dlib.shape_predictor(args["shape_predictor"])
-
+def main():
+    cap = cv2.VideoCapture(0)
     if not cap.isOpened():
         sys.exit("Could not open camera.")
 
-    while True:
-        ret, image = cap.read()
-        if not ret:
-            print("Failed to capture frame")
-            break
+    face_handler = FaceLandmarkerHandler()
+    hand_handler = HandLandmarkerHandler()
+    face_filters = FilterManager()
+    hand_filters = FilterManager()
 
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('q'):
-            break
+    ### Add filters for faces here
+    face_filters.add_filter(draw_landmarks_filter)
+    face_filters.add_filter(blush_filter)
 
-        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    ### Add filters for hands here
+    hand_filters.add_filter(draw_hand_landmarks_filter)
 
-        rects = detector(gray_image, 1)
+    try:
+        while True:
+            ret, frame_bgr = cap.read()
+            if not ret:
+                print("Failed to capture frame")
+                break
 
-        for (i, rect) in enumerate(rects):
-            # determine the facial landmarks for the face region, then
-            # convert the facial landmark (x, y)-coordinates to a NumPy
-            # array
-            shape = predictor(gray_image, rect)
-            shape = face_utils.shape_to_np(shape)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
-            # convert dlib's rectangle to a OpenCV-style bounding box
-            # [i.e., (x, y, w, h)], then draw the face bounding box
-            (x, y, w, h) = face_utils.rect_to_bb(rect)
-            cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
+            timestamp_ms = int(cap.get(cv2.CAP_PROP_POS_MSEC))
 
-            # show the face number
-            cv2.putText(image, "Face #{}".format(i + 1), (x - 10, y - 10),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            face_handler.detect(frame_rgb, timestamp_ms)
+            hand_handler.detect(frame_rgb, timestamp_ms)
 
-            # loop over the (x, y)-coordinates for the facial landmarks
-            # and draw them on the image
-            for (x, y) in shape:
-                cv2.circle(image, (x, y), 1, (0, 0, 255), -1)
+            face_landmarks = face_handler.get_landmarks()
+            hand_landmarks = hand_handler.get_landmarks()
 
-        # face = detect_face(frame, face_classifier)
-        # for (x, y, w, h) in face:
-        #     draw_detection(frame, x, y, w, h, "Face")
+            face_filtered = face_filters.apply(frame_bgr, face_landmarks)
+            hand_filtered = hand_filters.apply(face_filtered, hand_landmarks)
 
-        
-        cv2.imshow('Live Camera', image)
+            cv2.imshow('Live Camera', hand_filtered)
 
-    cap.release()
-    cv2.destroyAllWindows()
+    finally:
+        face_handler.close()
+        cap.release()
+        cv2.destroyAllWindows()
+
 
 if __name__ == '__main__':
     main()
