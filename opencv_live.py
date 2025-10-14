@@ -30,11 +30,6 @@ def main() -> None:
         for (x, y, w, h) in face:
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 4)
 
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-
-
-
         cv2.imshow('Live Camera', frame)
 
     cap.release()
