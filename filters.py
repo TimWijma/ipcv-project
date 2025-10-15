@@ -5,7 +5,7 @@ from mediapipe.framework.formats import landmark_pb2
 from mediapipe import solutions
 
 ### EXAMPLE FILTERS ###
-def blush_filter(frame, landmarks_list):
+def blush_filter(frame, landmarks_list, state=None):
     overlay = frame.copy()
     h, w, _ = frame.shape
     for face_landmarks in landmarks_list:
@@ -16,7 +16,7 @@ def blush_filter(frame, landmarks_list):
             cv2.circle(overlay, (cx, cy), 25, (147, 20, 255), -1)
     return cv2.addWeighted(overlay, 0.4, frame, 0.6, 0)
 
-def draw_landmarks_filter(frame_bgr, landmarks_list):
+def draw_landmarks_filter(frame_bgr, landmarks_list, state=None):
     if not landmarks_list:
         return frame_bgr
 
@@ -43,7 +43,7 @@ def draw_landmarks_filter(frame_bgr, landmarks_list):
 
     return cv2.cvtColor(annotated, cv2.COLOR_RGB2BGR)
 
-def draw_hand_landmarks_filter(frame_bgr, hand_landmarks_list):
+def draw_hand_landmarks_filter(frame_bgr, hand_landmarks_list, state=None):
     if not hand_landmarks_list:
         return frame_bgr
 

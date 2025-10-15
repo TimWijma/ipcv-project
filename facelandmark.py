@@ -9,7 +9,6 @@ class FaceLandmarkerHandler:
     FaceLandmarkerResult = mp.tasks.vision.FaceLandmarkerResult
     VisionRunningMode = mp.tasks.vision.RunningMode
 
-
     def __init__(self, model_path='face_landmarker.task'):
         self.latest_result = None
         options = mp.tasks.vision.FaceLandmarkerOptions(
@@ -78,15 +77,24 @@ class FilterManager:
     """Simple manager for applying filters to"""
     def __init__(self):
         self.filters = []
+        self.state = {}
 
     def add_filter(self, func):
         self.filters.append(func)
 
     def apply(self, frame_bgr, landmarks_list):
+        """Apply all the filters, keep track of state"""
         if not landmarks_list:
-            return frame_bgr
+            return frame_bgr, self.state
 
         output = frame_bgr.copy()
+
         for f in self.filters:
-            output = f(output, landmarks_list)
-        return output
+            result = f(output, landmarks_list, self.state)
+            if isinstance(result, tuple) and len(result) == 2:
+                output, state = result
+                self.state = state
+            else:
+                output = result
+
+        return output, self.state
