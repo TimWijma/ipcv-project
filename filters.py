@@ -9,6 +9,8 @@ def blush_filter(frame, landmarks_list, state=None):
     overlay = frame.copy()
     h, w, _ = frame.shape
     for face_landmarks in landmarks_list:
+        print(f"Applying blush to face landmarks: {face_landmarks}")
+
         left_cheek = face_landmarks[234]
         right_cheek = face_landmarks[454]
         for cheek in [left_cheek, right_cheek]:
