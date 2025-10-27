@@ -75,9 +75,9 @@ class HandLandmarkerHandler:
 
 class FilterManager:
     """Simple manager for applying filters to"""
-    def __init__(self):
+    def __init__(self, state=None):
         self.filters = []
-        self.state = {}
+        self.state = state if state is not None else {}
 
     def add_filter(self, func):
         self.filters.append(func)
@@ -93,7 +93,8 @@ class FilterManager:
             result = f(output, landmarks_list, self.state)
             if isinstance(result, tuple) and len(result) == 2:
                 output, state = result
-                self.state = state
+                # Update the existing state dict instead of replacing it
+                self.state.update(state)
             else:
                 output = result
 
