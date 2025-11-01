@@ -4,6 +4,8 @@ from common import add_text
 from facelandmark import FaceLandmarkerHandler, FilterManager, HandLandmarkerHandler
 from filters import blush_filter, draw_hand_landmarks_filter, draw_landmarks_filter
 from hand_filters import slider_effect, draw_slider_value
+from snapchat_filters import draw_snapchat_filters
+
 
 
 def main():
@@ -17,13 +19,23 @@ def main():
     hand_filters = FilterManager()
 
     ### Add filters for faces here
-    # face_filters.add_filter(blush_filter)
+    #face_filters.add_filter(blush_filter)
     face_filters.add_filter(draw_landmarks_filter)
+    face_filters.add_filter(
+    lambda frame, landmarks, state: draw_snapchat_filters(frame, landmarks, image_1, image_2, state)
+)
 
     ### Add filters for hands here
-    hand_filters.add_filter(draw_hand_landmarks_filter)
+    #hand_filters.add_filter(draw_hand_landmarks_filter)
 
-    # hand_filters.add_filter(slider_effect)
+    hand_filters.add_filter(slider_effect)
+
+    # snapchat images
+    image_1 = cv2.imread('hat_transparant.png', cv2.IMREAD_UNCHANGED)
+    image_2 = cv2.imread('sunglasses_transparant.png', cv2.IMREAD_UNCHANGED)
+
+    if image_1 is None or image_2 is None:
+        sys.exit("Error: could not load hat or sunglasses images.")
 
     try:
         while True:
@@ -49,11 +61,14 @@ def main():
             face_landmarks = face_handler.get_landmarks()
             hand_landmarks = hand_handler.get_landmarks()
 
-            face_filtered, face_state = face_filters.apply(frame_bgr, face_landmarks)
-            hand_filtered, hand_state = hand_filters.apply(face_filtered, hand_landmarks)
+            hand_filtered, hand_state = hand_filters.apply(frame_bgr, hand_landmarks)
 
-            # final_frame, _ = draw_slider_value(hand_filtered, hand_state)
-            final_frame = hand_filtered
+            face_filters.state.update(hand_state)
+
+            face_filtered, face_state = face_filters.apply(hand_filtered, face_landmarks)
+
+            final_frame, _ = draw_slider_value(face_filtered, face_state)
+            #final_frame = hand_filtered
 
             print(f"Hand state: {hand_state}")
 
