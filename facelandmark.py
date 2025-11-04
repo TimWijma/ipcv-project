@@ -37,7 +37,6 @@ class FaceLandmarkerHandler:
         """Clean up mediapipe"""
         self.landmarker.close()
 
-import mediapipe as mp
 
 class HandLandmarkerHandler:
     """Handles hand landmark detection using MediaPipe in live mode."""
@@ -72,6 +71,7 @@ class HandLandmarkerHandler:
 
     def close(self):
         self.landmarker.close()
+
 
 class FilterManager:
     """Simple manager for applying filters to"""

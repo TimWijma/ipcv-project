@@ -97,7 +97,6 @@ def draw_snapchat_filters(frame, landmarks_list,slider, slider_resize = False,sc
             filter_number+=1
     return frame
 
-
 def load_filters(*filters):
 
     filters_used = []
