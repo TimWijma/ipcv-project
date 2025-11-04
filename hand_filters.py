@@ -15,26 +15,26 @@ def slider_effect(frame, hand_landmarks_list, state):
         distance = math.dist((index_finger_tip.x, index_finger_tip.y), (thumb_tip.x, thumb_tip.y))
         print(f"Distance between index finger tip and thumb tip: {distance}")
         
-        cx, cy = int(index_finger_tip.x * w), int(index_finger_tip.y * h)
-        cv2.circle(overlay, (cx, cy), 50, (255, 0, 0), -1)
+        # cx, cy = int(index_finger_tip.x * w), int(index_finger_tip.y * h)
+        # cv2.circle(overlay, (cx, cy), 50, (255, 0, 0), -1)
 
-        cx, cy = int(thumb_tip.x * w), int(thumb_tip.y * h)
-        cv2.circle(overlay, (cx, cy), 50, (255, 0, 0), -1)
+        # cx, cy = int(thumb_tip.x * w), int(thumb_tip.y * h)
+        # cv2.circle(overlay, (cx, cy), 50, (255, 0, 0), -1)
 
-        line_color = (0, 255, 0) if distance < 0.2 else (0, 0, 255)
+        # line_color = (0, 255, 0) if distance < 0.2 else (0, 0, 255)
 
-        cv2.line(
-            overlay, 
-            (int(index_finger_tip.x * w), int(index_finger_tip.y * h)),
-            (int(thumb_tip.x * w), int(thumb_tip.y * h)), 
-            line_color, 
-            5
-        )
+        # cv2.line(
+        #     overlay, 
+        #     (int(index_finger_tip.x * w), int(index_finger_tip.y * h)),
+        #     (int(thumb_tip.x * w), int(thumb_tip.y * h)), 
+        #     line_color, 
+        #     5
+        # )
 
         if distance < 0.2:
             center_y = int((index_finger_tip.y + thumb_tip.y) / 2 * h)
             center_x = int((index_finger_tip.x + thumb_tip.x) / 2 * w)
-            cv2.line(overlay, (0, center_y), (w, center_y), (0, 255, 0), 3)
+            # cv2.line(overlay, (0, center_y), (w, center_y), (0, 255, 0), 3)
 
             is_left = center_x < w / 2
 

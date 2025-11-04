@@ -53,7 +53,7 @@ class HandLandmarkerHandler:
             base_options=BaseOptions(model_asset_path=model_path),
             running_mode=VisionRunningMode.LIVE_STREAM,
             result_callback=self._on_result,
-            num_hands=2
+            num_hands=1
         )
 
         self.landmarker = HandLandmarker.create_from_options(options)
