@@ -20,25 +20,26 @@ def face_swirl_filter(frame, landmarks_list, state):
         strength = (state.get('slider_left_value', 50) - 50 ) * 0.1
         
         # Create swirl effect
+        # Iterate over pixels inside box bounded by radius around center
         for y in range(max(0, face_center_y - radius), min(h, face_center_y + radius)):
             for x in range(max(0, face_center_x - radius), min(w, face_center_x + radius)):
                 # Calculate distance from center
-
                 dist_x = float(x - face_center_x)
                 dist_y = float(y - face_center_y)
+                # Calculate euclidean distance from center
                 dist = np.sqrt(dist_x**2 + dist_y**2)
-                
+                # Apply swirl effect if pixels are within radius
                 if dist < radius and dist > 0:
+                    # Calculate swirl coefficient based on distance from center point
                     swirl_amount = (radius - dist) / radius
+                    # Calculate the pixel's angle of rotation
                     angle = strength * swirl_amount
-                    
+                    # Calculate where pixels will be moved to
                     cos_a = np.cos(angle)
                     sin_a = np.sin(angle)
-                    
                     #operate with 2D rotation matrix
                     new_x = int(dist_x * cos_a - dist_y * sin_a + face_center_x)
                     new_y = int(dist_x * sin_a + dist_y * cos_a + face_center_y)
-
                     # Check bounds and copy pixel
                     if 0 <= new_x < w and 0 <= new_y < h:
                         output[y, x] = frame[new_y, new_x]
