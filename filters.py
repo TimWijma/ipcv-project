@@ -4,20 +4,6 @@ import mediapipe as mp
 from mediapipe.framework.formats import landmark_pb2
 from mediapipe import solutions
 
-### EXAMPLE FILTERS ###
-def blush_filter(frame, landmarks_list, state=None):
-    overlay = frame.copy()
-    h, w, _ = frame.shape
-    for face_landmarks in landmarks_list:
-        print(f"Applying blush to face landmarks: {face_landmarks}")
-
-        left_cheek = face_landmarks[234]
-        right_cheek = face_landmarks[454]
-        for cheek in [left_cheek, right_cheek]:
-            cx, cy = int(cheek.x * w), int(cheek.y * h)
-            cv2.circle(overlay, (cx, cy), 25, (147, 20, 255), -1)
-    return cv2.addWeighted(overlay, 0.4, frame, 0.6, 0)
-
 def draw_landmarks_filter(frame_bgr, landmarks_list, state=None):
     if not landmarks_list:
         return frame_bgr
@@ -77,16 +63,11 @@ def draw_snapchat_filters(frame, landmarks_list,slider, slider_resize = False,sc
     filters, factor = load_filters(*which_filter)
     resized =  resize_filters(filters,slider_resize, slider, factor)
 
-
-
-
-
     filter_dict = {'hat': 10,
                    'sunglasses':197}
     
     overlay = frame.copy()
-    h, w, _ = frame.shape
-    
+    h, w, _ = frame.shape    
 
     for face_landmarks in landmarks_list:
         print(f"Applying blush to face landmarks: {face_landmarks}")
@@ -99,8 +80,6 @@ def draw_snapchat_filters(frame, landmarks_list,slider, slider_resize = False,sc
         for pos in filterlandmark_positions:
             cx, cy = int(pos.x * w), int(pos.y * h)
 
-
-            
             snap = resized[filter_number]
             h_hat ,w_hat = snap.shape[:2]
           
@@ -118,7 +97,6 @@ def draw_snapchat_filters(frame, landmarks_list,slider, slider_resize = False,sc
             filter_number+=1
     return frame
 
-            
 
 def load_filters(*filters):
 
@@ -139,7 +117,6 @@ def load_filters(*filters):
             print(f"Warning: '{name}' not found in filter_dict.")
 
     return filters_used,factor
-
 
 def resize_filters(filters_used,slider_resize, slider, factor):
     resized_filters =[]

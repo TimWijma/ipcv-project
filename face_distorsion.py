@@ -14,9 +14,7 @@ def face_swirl_filter(frame, landmarks_list, state):
         left_face = face_landmarks[234]
         right_face = face_landmarks[454]
         face_width = abs(right_face.x - left_face.x) * w
-        #radius of swirl (smaller than face width)
-        rad = (state.get('slider_right_value', 60)) * 0.01
-        radius = int(face_width*rad)
+        radius = int(face_width * 0.6)
         
         # Swirl parameters (we can use it to dynamically adjust swirl)
         strength = (state.get('slider_left_value', 50) - 50 ) * 0.1

@@ -57,6 +57,5 @@ def draw_snapchat_filters(frame, landmarks_list,hat,sun,state):
 
             output[y1:y2, x1:x2] = roi
     print('done')
-    print(f"Overlaying {fw}x{fh} at {(x1, y1)}")
 
     return output,state
