@@ -1,12 +1,9 @@
 import cv2
 import sys
-from common import add_text
 from face_distorsion import face_swirl_filter
 from facelandmark import FaceLandmarkerHandler, FilterManager, HandLandmarkerHandler
-from filters import blush_filter, draw_hand_landmarks_filter, draw_landmarks_filter
 from hand_filters import slider_effect, draw_slider_value
 from snapchat_filters import draw_snapchat_filters
-
 
 def switch_filter(current_index, filters):
     current_index = (current_index + 1) % len(filters)
@@ -20,7 +17,6 @@ def switch_filter(current_index, filters):
 
         if image_1 is None or image_2 is None:
             sys.exit("Error: could not load hat or sunglasses images.")
-
 
         face_filters = FilterManager({})
         face_filters.add_filter(

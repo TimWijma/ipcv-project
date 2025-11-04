@@ -1,6 +1,5 @@
 import cv2
 import math
-from common import add_text
 
 def slider_effect(frame, hand_landmarks_list, state):
     if not hand_landmarks_list:
@@ -28,8 +27,6 @@ def slider_effect(frame, hand_landmarks_list, state):
             else:
                 state['slider_right_value'] = slider_value
 
-
-    frame = add_text(frame, f"Distance: {distance:.2f}")
 
     return cv2.addWeighted(overlay, 0.4, frame, 0.6, 0), state
 
